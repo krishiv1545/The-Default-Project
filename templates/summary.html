@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Salt & Prepper | Summary</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='logo.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <nav class="navbar">
+        <div class="nav-left">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+          <div class="title" style="display: flex; flex-direction: column">
+            <h5>Salt And</h5>
+            <h1>PREPPER</h1>
+          </div>
+        </div>
+        <div class="nav-right">
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('scores') }}">Scores</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('summary') }}" class="highlightednavbarbutton"
+            >Summary</a
+          >
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </nav>
+
+      <div class="main-content">
+        <h3>Analytical Summary</h3>
+        <div class="graph-container">
+          <div class="bargraph">
+            <canvas id="bargraph"></canvas>
+          </div>
+          <div class="donutchart">
+            <canvas id="donutchart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              console.log("Subjects:", {{ sub_name_list|tojson|safe }});
+              console.log("Counts:", {{ quizzes_attempted_per_sub_list|tojson|safe }});
+
+              // Bar chart
+              function generateYellowShades(numColors) {
+                const shades = [];
+                for(let i = 0; i < numColors; i++) {
+                  const lightness = 50 + (i * 5) % 50;  // Cycles between 50-100%
+                  shades.push(`hsla(56, 100%, ${lightness}%, 0.8)`);
+                }
+                return shades;
+              }
+              const labels = {{ sub_name_list|tojson|safe }};
+              const backgroundColors = generateYellowShades(labels.length);
+
+              const barCtx = document.getElementById("bargraph").getContext("2d");
+              new Chart(barCtx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "No. of Quizzes",
+                    data: {{ quizzes_attempted_per_sub_list|tojson|safe }},
+                    backgroundColor: backgroundColors,
+                    borderWidth: 0,
+                  }],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: "Number of Quizzes attended per Subject",
+                    },
+                    legend: {
+                      display: true,
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                      },
+                    },
+                  },
+                },
+              });
+
+              // Donut chart
+              const pieCtx = document.getElementById("donutchart").getContext("2d");
+      new Chart(pieCtx, {
+          type: "doughnut",
+          data: {
+              labels: ["Correct Answers", "Incorrect Answers"],
+              datasets: [{
+                  label: "No. of Questions",
+                  data: [{{ correct_no }}, {{ incorrect_no }}],
+                  backgroundColor: [
+                      "rgb(186, 255, 186)",
+                      "rgb(255, 96, 96)",
+                  ],
+                  borderWidth: 0,
+                  cutout: '55%'
+              }],
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: "No. of Questions (Correct / Incorrect)",
+                  },
+              },
+          },
+      });
+
+
+            });
+    </script>
+  </body>
+</html>

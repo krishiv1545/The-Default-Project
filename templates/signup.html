@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>RESUME WAR</title>
+    <title>Salt & Prepper | Sign Up</title>
     <link
       rel="icon"
       type="image/png"
@@ -13,34 +13,62 @@
       href="{{ url_for('static', filename='signup.css') }}"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Teko:wght@500&display=swap"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
     <main>
       <div class="left-panel">
         <div class="form-box">
-          <h2>Sign Up</h2>
           <form
             method="POST"
             action="{{ url_for('signup') }}"
             enctype="multipart/form-data"
           >
+            <h3>Signup</h3>
+            <label for="email"></label>
             <input type="email" name="email" placeholder="Email" required />
+            <label for="username"></label>
             <input
               type="text"
               name="username"
               placeholder="Username"
               required
             />
+            <label for="password"></label>
             <input
               type="password"
               name="password"
               placeholder="Password"
               required
             />
-            <button type="submit">Sign Up</button>
+            <label for="name"></label>
+            <input type="text" name="name" placeholder="Full Name" required />
+            <label for="qualification"></label>
+            <select
+              class="form-select"
+              id="qualification"
+              name="qualification"
+              required
+            >
+              <option value="undergrad">Student: Undergraduate</option>
+              <option value="postgrad">Student: Postgraduate</option>
+              <option value="doctorate">Student: Doctorate</option>
+              <option value="professional">Working Professional</option>
+              <option value="professor">Professor</option>
+              <option value="other">Other</option>
+            </select>
+            <label for="dob"></label>
+            <input
+              type="date"
+              class="form-control"
+              id="dob"
+              name="dob"
+              required
+            />
+            <button type="submit" class="search">Sign Up</button>
           </form>
           <p>
             Already have an account?
@@ -50,6 +78,50 @@
       </div>
       <div class="right-panel">
         <!-- FILLER -->
+        <div class="nav-left">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+          <div class="title" style="display: flex; flex-direction: column">
+            <h5>Salt And</h5>
+            <h1>PREPPER</h1>
+          </div>
+        </div>
+        <div class="wrapper">
+          <div class="content">
+            <div class="content-in-content">
+              <h4>Hiiiiiii, Krishiv K. here! 👋</h4>
+              <p>
+                I created this web application as part of the Modern Application
+                Development-I course, following a project brief from the
+                <b>Indian Institute of Technology, Madras.</b>
+                <br /><br />
+                <b>Salt and Prepper</b> is a platform designed for both
+                educators and students. As a professional, you can sign up* to
+                create quizzes that help your students learn more effectively.
+                If you're a student, you can access a variety of quizzes to
+                practice and sharpen your skills by picking a subject from our
+                collection. <br /><br />
+                On the right, you will find a preview of the platform.
+                <br /><br />
+                <span style="color: red"
+                  >For Admin access to add new Questions, Quizzess and Subjects
+                  to the platform, please email me on
+                  <u>23f3003998@ds.study.iitm.ac.in</u>
+                </span>
+              </p>
+            </div>
+          </div>
+          <div class="display">
+            <img
+              src="{{ url_for('static', filename='images/user_dashboard.png') }}"
+              alt="User Dashboard"
+              style="margin-bottom: 40px"
+            />
+            <img
+              src="{{ url_for('static', filename='images/user_summary.png') }}"
+              alt="User Summary"
+            />
+          </div>
+        </div>
       </div>
     </main>
   </body>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Salt & Prepper | Scores</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='logo.png') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <nav class="navbar">
+        <div class="nav-left">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+          <div class="title" style="display: flex; flex-direction: column">
+            <h5>Salt And</h5>
+            <h1>PREPPER</h1>
+          </div>
+        </div>
+        <div class="nav-right">
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('scores') }}" class="highlightednavbarbutton"
+            >Scores</a
+          >
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('summary') }}">Summary</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </nav>
+
+      <div class="search-box">
+        <h5></h5>
+        <form
+          method="POST"
+          action="{{ url_for('scores') }}"
+          enctype="multipart/form-data"
+        >
+          <input type="text" name="search" placeholder="Search..." />
+          <select name="filterBy" id="filterBy" class="form-select">
+            <option value="sub">Filter by Subject Name</option>
+            <option value="quiz">Filter by Quiz Name</option>
+            <option value="score">Filter by Quiz Score</option>
+          </select>
+          <button type="submit" class="search">Search</button>
+        </form>
+      </div>
+
+      <div class="main-content">
+        <h3>Scores</h3>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Score ID</th>
+                <th>Subject Name</th>
+                <th>Quiz Name</th>
+                <th>Time Taken</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for score in scores %}
+              <tr>
+                <td>{{ score.id }}</td>
+                <td>{{ score.quiz.subject.name }}</td>
+                <td>{{ score.quiz.name }}</td>
+                {% set duration = score.end_time - score.start_time %}
+                <!-- copied :( -->
+                <td>
+                  {% set mins = duration.seconds//60 %} {% set secs =
+                  duration.seconds%60 %} {% if mins > 0 %} {{ mins }} Mins {{
+                  secs }} Secs {% else %} 0 mins {{ secs }} Secs {% endif %}
+                </td>
+                <td>
+                  {{ (score.score_percentage * score.correct_answers|length /
+                  100)|int }} / {{ score.correct_answers|length }}
+                </td>
+                <td>
+                  <span
+                    class="percentage {% if score.score_percentage < 40 %}red{% endif %}"
+                    >{{ score.score_percentage}} %</span
+                  >
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    onclick="openViewScoreDetails('{{ score.id }}')"
+                    class="view"
+                  >
+                    View
+                  </button>
+                  <div class="blurrybackground" id="blurrybackground"></div>
+
+                  <div
+                    class="popup-div"
+                    id="viewScoreDetails_{{ score.id }}"
+                    style="display: none"
+                  >
+                    <p><b>Score ID: </b><span>{{ score.id }}</span></p>
+                    <p>
+                      <b>Subject ID: </b
+                      ><span>{{ score.quiz.subject.id }}</span>
+                    </p>
+                    <p>
+                      <b>Subject Name: </b
+                      ><span>{{ score.quiz.subject.name }}</span>
+                    </p>
+                    <p><b>Quiz ID: </b><span>{{ score.quiz.id }}</span></p>
+                    <p></p>
+                    <p><b>Quiz Name: </b><span>{{ score.quiz.name }}</span></p>
+                    <p></p>
+                    <p>
+                      <b>Start Time: </b>
+                      <span>{{ score.start_time.strftime('%H:%M:%S') }}</span>
+                    </p>
+                    <p>
+                      <b>End Time: </b>
+                      <span>{{ score.end_time.strftime('%H:%M:%S') }}</span>
+                    </p>
+                    <p>
+                      <b>Attempted options in sequence: </b
+                      ><span>{{ score.attempted_answers|list }}</span>
+                    </p>
+                    <p>
+                      <b>Correct options in sequence: </b
+                      ><span>{{ score.correct_answers|list }}</span>
+                    </p>
+                    <p>
+                      <b>Correct Marks: </b
+                      ><span
+                        >{{ (score.score_percentage *
+                        score.correct_answers|length / 100)|int }}</span
+                      >
+                    </p>
+                    <p>
+                      <b>Total Marks: </b
+                      ><span>{{ score.correct_answers|length }}</span>
+                    </p>
+                    <p>
+                      <b>Percentage (%): </b
+                      ><span>{{ score.score_percentage }}</span>
+                    </p>
+                    <button
+                      type="button"
+                      onclick="closeViewScoreDetails('{{ score.id }}')"
+                      class="view"
+                    >
+                      Close Details
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      function openViewScoreDetails(scoreId) {
+        document.getElementById("viewScoreDetails_" + scoreId).style.display =
+          "block";
+        document.getElementById("blurrybackground").style.display = "block";
+      }
+
+      function closeViewScoreDetails(scoreId) {
+        document.getElementById("viewScoreDetails_" + scoreId).style.display =
+          "none";
+        document.getElementById("blurrybackground").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

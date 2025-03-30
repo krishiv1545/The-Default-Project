@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Salt & Prepper | Quiz</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='logo.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+        <div class="title">
+          <h5>Salt And</h5>
+          <h1>PREPPER</h1>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="{{ url_for('forget_selections', quiz_id = quiz.id) }}"
+          >Clear Selections</a
+        >
+        <span class="nav-separator">|</span>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </nav>
+
+    <div class="card main-content">
+      <div class="card-header">
+        <h4>Subject: {{ quiz.subject.name }}</h4>
+        <h5>Quiz: {{ quiz.name }}</h5>
+      </div>
+      <form method="POST" id="selectQuestionForm">
+        <!-- Hidden field to indicate which action is being performed -->
+        <input type="hidden" name="action" id="action" value="" />
+
+        <div class="main-quiz-content">
+          <div class="left-quiz-panel">
+            {% for quiz_question in quiz_questions %} <input type="radio"
+            id="question{{ quiz_question.id }}" name="selectedquestion"
+            value="{{ quiz_question.id }}" {% if selected_question and
+            quiz_question.id == selected_question.id %}checked{% endif %} />
+            <label for="question{{ quiz_question.id }}"
+              >{{ quiz_question.question_title }}</label
+            >
+            {% endfor %}
+          </div>
+          <div class="right-quiz-panel">
+            <h5>Question: {{ selected_question.question_statement }}</h5>
+            <h6>Select Answer:</h6>
+
+            <!-- Hidden field to mark which question the answer belongs to -->
+            <input
+              type="hidden"
+              name="activequestion"
+              value="{{ selected_question.id }}"
+            />
+
+            <input type="radio" id="selectedoption1" name="selectedoption"
+            value="1" {% if selected_question.id in attempted_answers_dict and
+            attempted_answers_dict[selected_question.id] == 1 %}checked{% endif
+            %} />
+            <label for="selectedoption1">{{ selected_question.option1 }}</label>
+
+            <input type="radio" id="selectedoption2" name="selectedoption"
+            value="2" {% if selected_question.id in attempted_answers_dict and
+            attempted_answers_dict[selected_question.id] == 2 %}checked{% endif
+            %} />
+            <label for="selectedoption2">{{ selected_question.option2 }}</label>
+
+            <input type="radio" id="selectedoption3" name="selectedoption"
+            value="3" {% if selected_question.id in attempted_answers_dict and
+            attempted_answers_dict[selected_question.id] == 3 %}checked{% endif
+            %} />
+            <label for="selectedoption3">{{ selected_question.option3 }}</label>
+
+            <input type="radio" id="selectedoption4" name="selectedoption"
+            value="4" {% if selected_question.id in attempted_answers_dict and
+            attempted_answers_dict[selected_question.id] == 4 %}checked{% endif
+            %} />
+            <label for="selectedoption4">{{ selected_question.option4 }}</label>
+          </div>
+        </div>
+      </form>
+
+      <div class="submit-container">
+        <form
+          action="{{ url_for('submit_quiz', 
+                          user_id=user_id, 
+                          quiz_id=quiz.id, 
+                          attempted_answers_dict_str=attempted_answers_dict_str,
+                          correct_answers_dict_str=correct_answers_dict_str,
+                          start_time=start_time) }}"
+          method="POST"
+          id="submitForm"
+        >
+          <button type="submit" class="add" style="width: 200px">
+            Submit Quiz
+          </button>
+        </form>
+      </div>
+      <!-- <button>
+        <a
+          href="{{ url_for('submit_quiz', 
+                user_id=user_id, 
+                quiz_id=quiz.id, 
+                attempted_answers_dict=attempted_answers_dict,
+                correct_answers_dict=correct_answers_dict,
+                start_time=start_time) }}"
+          >Submit</a
+        >
+      </button> -->
+    </div>
+
+    <!-- Separate JavaScript block -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("selectQuestionForm");
+        const actionInput = document.getElementById("action");
+
+        // Attach change listeners to left-panel question radio buttons
+        const questionRadios = document.querySelectorAll(
+          'input[name="selectedquestion"]'
+        );
+        questionRadios.forEach(function (radio) {
+          radio.addEventListener("change", function () {
+            actionInput.value = "change_question";
+            form.submit();
+          });
+        });
+
+        // Attach change listeners to right-panel answer radio buttons
+        const answerRadios = document.querySelectorAll(
+          'input[name="selectedoption"]'
+        );
+        answerRadios.forEach(function (radio) {
+          radio.addEventListener("change", function () {
+            actionInput.value = "select_answer";
+            form.submit();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

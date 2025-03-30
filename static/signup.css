@@ -1,0 +1,164 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+}
+
+body {
+  font-family: "Arial", sans-serif !important;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+}
+
+.left-panel {
+  width: 30%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  height: 100vh;
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 1.15rem;
+  border: 1px solid #caced1;
+  border-radius: 4px;
+  background-color: #fff;
+  color: inherit;
+  font-family: inherit;
+  box-sizing: border-box;
+  margin-bottom: 10px !important;
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+}
+
+input,
+select {
+  height: 40px;
+}
+
+.search {
+  color: blue !important;
+  padding: 6px 20px;
+  margin: 30px 0px 30px 0px;
+  background-color: #fff;
+  border: blue solid 1px;
+  position: relative;
+  transition: border-radius 0.2s ease-in-out;
+  width: 100px;
+}
+
+.search:hover {
+  box-shadow: 0px 5px 0px rgb(0, 0, 255);
+  border-radius: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 30px;
+}
+
+label {
+  display: none;
+}
+
+h3 {
+  margin: 10px;
+  margin-bottom: 40px !important;
+}
+
+.nav-left {
+  margin-top: 20px;
+  margin-left: 20px;
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  /* box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.3); */
+}
+
+.nav-left img {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+  margin-inline: 10px;
+}
+
+.nav-left h1 {
+  color: #464646;
+  margin: 0px;
+}
+.nav-left h5 {
+  color: #464646;
+  margin: 0px;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  width: 70%;
+  height: 100vh;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+  /* border: #ff0000 solid 1px; */
+  height: 100%;
+}
+
+.display,
+.content {
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.content .content-in-content {
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: 50px;
+  /* border: #000 solid 1px; */
+  padding: 40px;
+}
+
+.content .content-in-content h4 {
+  margin-bottom: 20px;
+  font-weight: bolder;
+}
+
+.display img {
+  width: 450px;
+  height: auto;
+  padding: 10px;
+  border: #000 solid 1px;
+}

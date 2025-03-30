@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Salt & Prepper | Quizzes</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='logo.png') }}"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='quizzes.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <nav class="navbar">
+        <div class="nav-left">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+          <div class="title" style="display: flex; flex-direction: column">
+            <h5>Salt And</h5>
+            <h1>PREPPER</h1>
+          </div>
+        </div>
+        <div class="nav-right">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('quizzes') }}" class="highlightednavbarbutton"
+            >Quizzes</a
+          >
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('admin_summary') }}">Summary</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('add_admin') }}">Give Access</a>
+          <span class="nav-separator">|</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </nav>
+
+      <div class="search-box">
+        <h5></h5>
+        <form
+          method="POST"
+          action="{{ url_for('quizzes') }}"
+          enctype="multipart/form-data"
+        >
+          <input type="text" name="quiz_search" placeholder="Enter Quiz Name" />
+          <button type="submit" class="search">Search</button>
+        </form>
+      </div>
+
+      <div class="main-content">
+        <h2 style="padding-bottom: 12px">Quizzes</h2>
+
+        {% for quiz in quizzes %}
+        <div class="card">
+          <div class="card-body">
+            <h4>{{ quiz.name }}</h4>
+            <p>
+              <u>
+                Subject: {{ quiz.subject.name }} | No. of Questions: {{
+                quiz.no_of_questions }} | Duration: {{ quiz.duration }} mins |
+                Validity: {{ quiz.validity.strftime('%d-%m-%Y') }}
+              </u>
+            </p>
+            {% if quiz.questions %}
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Question ID</th>
+                    <th>Question Title</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for question in quiz.questions %}
+                  <tr>
+                    <td>{{ question.id }}</td>
+                    <td>{{ question.question_title }}</td>
+                    <td>
+                      <button
+                        type="button"
+                        onclick="openEditQuestionForm('{{ question.id }}')"
+                        class="view"
+                      >
+                        Edit
+                      </button>
+                      <div class="blurrybackground" id="blurrybackground"></div>
+                      <div
+                        class="popup-div"
+                        id="editQuestionFormPopup_{{ question.id }}"
+                        style="display: none"
+                      >
+                        <form
+                          action="{{ url_for('edit_question', question_id=question.id) }}"
+                          method="POST"
+                        >
+                          <label for="question_title">Question Title:</label>
+                          <input
+                            type="text"
+                            name="question_title"
+                            required
+                            value="{{ question.question_title }}"
+                          />
+                          <label for="question_statement"
+                            >Question Statement</label
+                          >
+                          <input
+                            type="text"
+                            name="question_statement"
+                            required
+                            value="{{ question.question_statement }}"
+                          />
+                          <label for="option1">First option:</label>
+                          <input
+                            type="text"
+                            name="option1"
+                            required
+                            value="{{ question.option1 }}"
+                          />
+                          <label for="option2">Second option:</label>
+                          <input
+                            type="text"
+                            name="option2"
+                            required
+                            value="{{ question.option2 }}"
+                          />
+                          <label for="option3">Third option:</label>
+                          <input
+                            type="text"
+                            name="option3"
+                            required
+                            value="{{ question.option3 }}"
+                          />
+                          <label for="option4">Fourth option:</label>
+                          <input
+                            type="text"
+                            name="option4"
+                            required
+                            value="{{ question.option4 }}"
+                          />
+                          <label for="correct_option">Correct option:</label>
+                          <select
+                            name="correct_option"
+                            required
+                            value="{{ question.correct_option }}"
+                          >
+                            <option value="1">Option 1</option>
+                            <option value="2">Option 2</option>
+                            <option value="3">Option 3</option>
+                            <option value="4">Option 4</option>
+                          </select>
+                          <button
+                            type="submit"
+                            onclick="closeEditQuestionForm('{{ question.id }}')"
+                            class="view"
+                          >
+                            Confirm changes
+                          </button>
+                          <button
+                            type="button"
+                            onclick="closeEditQuestionForm('{{ question.id }}')"
+                            class="view delete"
+                            style="margin-top: 20px"
+                          >
+                            Cancel
+                          </button>
+                        </form>
+                      </div>
+                      <button class="view delete">
+                        <a
+                          href="{{ url_for('delete_question', question_id=question.id) }}"
+                          >Delete</a
+                        >
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+            <button
+              type="button"
+              onclick="openQuestionForm('{{ quiz.id }}')"
+              class="search"
+            >
+              Add Question
+            </button>
+            <div class="blurrybackground" id="blurrybackground"></div>
+            <div
+              id="questionFormPopup_{{ quiz.id }}"
+              style="display: none"
+              class="popup-div hide-labels"
+            >
+              <form
+                action="{{ url_for('add_question', quiz_id=quiz.id) }}"
+                method="POST"
+              >
+                <label for="question_title">Question Title:</label>
+                <input
+                  type="text"
+                  name="question_title"
+                  id="question_title"
+                  placeholder="Question Title"
+                  required
+                />
+
+                <label for="question_statement">Question Statement:</label>
+                <input
+                  type="text"
+                  name="question_statement"
+                  id="question_statement"
+                  placeholder="Question Statement"
+                  required
+                />
+
+                <label for="option1">Option 1:</label>
+                <input
+                  type="text"
+                  name="option1"
+                  id="option1"
+                  placeholder="Option 1"
+                  required
+                />
+
+                <label for="option2">Option 2:</label>
+                <input
+                  type="text"
+                  name="option2"
+                  id="option2"
+                  placeholder="Option 2"
+                  required
+                />
+
+                <label for="option3">Option 3:</label>
+                <input
+                  type="text"
+                  name="option3"
+                  id="option3"
+                  placeholder="Option 3"
+                  required
+                />
+
+                <label for="option4">Option 4:</label>
+                <input
+                  type="text"
+                  name="option4"
+                  id="option4"
+                  placeholder="Option 4"
+                  required
+                />
+
+                <label for="correct_option" style="display: block"
+                  >Correct Answer:</label
+                >
+                <select name="correct_option" id="correct_option" required>
+                  <option value="1">Option 1</option>
+                  <option value="2">Option 2</option>
+                  <option value="3">Option 3</option>
+                  <option value="4">Option 4</option>
+                </select>
+
+                <button
+                  type="submit"
+                  onclick="closeQuestionForm('{{ quiz.id }}')"
+                  class="view"
+                >
+                  Add Question
+                </button>
+                <button
+                  type="button"
+                  onclick="closeQuestionForm('{{ quiz.id }}')"
+                  class="view delete"
+                  style="margin-top: 20px"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="add-container">
+          <button
+            type="button"
+            onclick="openQuizForm()"
+            class="add"
+            style="margin-top: 24px"
+          >
+            Add Quiz
+          </button>
+        </div>
+        <!-- Add this popup form HTML -->
+        <div class="blurrybackground" id="blurrybackground"></div>
+        <div id="quizFormPopup" style="display: none" class="popup-div">
+          <form action="{{ url_for('add_quiz') }}" method="POST">
+            <label for="subject_select">Subject:</label>
+            <select name="subject_id" id="subject_select" required>
+              {% for subject in subjects %}
+              <option value="{{ subject.id }}">{{ subject.name }}</option>
+              {% endfor %}
+            </select>
+
+            <label for="quiz_name">Quiz Name:</label>
+            <input
+              type="text"
+              name="name"
+              id="quiz_name"
+              placeholder="Quiz Name"
+              required
+            />
+
+            <label for="question_count">Number of Questions:</label>
+            <input
+              type="number"
+              name="no_of_questions"
+              id="question_count"
+              placeholder="Number of Questions"
+              required
+            />
+
+            <label for="quiz_duration">Duration (minutes):</label>
+            <input
+              type="number"
+              name="duration"
+              id="quiz_duration"
+              placeholder="Duration (minutes)"
+              required
+            />
+
+            <label for="quiz_validity">Valid Until:</label>
+            <input
+              type="datetime-local"
+              name="validity"
+              id="quiz_validity"
+              required
+            />
+
+            <button type="submit" onclick="closeQuizForm()" class="view">
+              Create Quiz
+            </button>
+            <button
+              type="button"
+              onclick="closeQuizForm()"
+              class="view delete"
+              style="margin-top: 20px"
+            >
+              Cancel
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      function openQuizForm() {
+        document.getElementById("quizFormPopup").style.display = "block";
+        document.getElementById("blurrybackground").style.display = "block";
+      }
+
+      function closeQuizForm() {
+        document.getElementById("quizFormPopup").style.display = "none";
+        document.getElementById("blurrybackground").style.display = "none";
+      }
+
+      function openQuestionForm(quizId) {
+        document.getElementById("questionFormPopup_" + quizId).style.display =
+          "block";
+        document.getElementById("blurrybackground").style.display = "block";
+      }
+
+      function closeQuestionForm(quizId) {
+        document.getElementById("questionFormPopup_" + quizId).style.display =
+          "none";
+        document.getElementById("blurrybackground").style.display = "none";
+      }
+      function openEditQuestionForm(questionId) {
+        document.getElementById(
+          "editQuestionFormPopup_" + questionId
+        ).style.display = "block";
+        document.getElementById("blurrybackground").style.display = "block";
+      }
+
+      function closeEditQuestionForm(questionId) {
+        document.getElementById(
+          "editQuestionFormPopup_" + questionId
+        ).style.display = "none";
+        document.getElementById("blurrybackground").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
